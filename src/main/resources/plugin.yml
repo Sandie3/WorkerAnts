@@ -1,0 +1,7 @@
+name: WorkerAnts
+version: '${project.version}'
+main: moe.sandie.workerants.WorkerAnts
+api-version: 1.19
+author: sandie
+description: Create npc workers you can upgrade and get items from
+depend: [ citizens ]
