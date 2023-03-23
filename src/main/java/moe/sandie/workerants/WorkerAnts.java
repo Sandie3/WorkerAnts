@@ -30,6 +30,7 @@ public final class WorkerAnts extends JavaPlugin {
 
     }
 
+
     public CitizensListener getCitizensListener() {
         return citizensListener;
     }
