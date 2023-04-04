@@ -1,0 +1,5 @@
+generate-files-on-join: true
+language: en-US
+language-override-client: false
+storage-method:
+  player-data: yaml

@@ -1,0 +1,4 @@
+leftClickNpc: "Left clicked npc"
+consoleError: "Error!??"
+errorLoading: "Plugin is still loading...!"
+noPermission: "You do not have permissions for this command!"

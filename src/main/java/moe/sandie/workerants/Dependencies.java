@@ -1,7 +1,7 @@
 package moe.sandie.workerants;
 
 import moe.sandie.workerants.listeners.CitizensListener;
-import moe.sandie.workerants.listeners.IDependencies;
+import moe.sandie.workerants.api.IDependencies;
 
 import net.citizensnpcs.api.CitizensPlugin;
 import io.github.znetworkw.znpcservers.ServersNPC;
@@ -23,10 +23,11 @@ import java.util.stream.Collectors;
 public class Dependencies implements IDependencies {
 
     private final WorkerAnts plugin;
-    private static Economy economy = null;
+    public static Economy economy = null;
     public static CitizensPlugin citizens = null;
     private static ServersNPC znpcs = null;
     private static Permission permission = null;
+    private final Set<UUID> selectingNpcs = new HashSet<>();
 
     public Dependencies(final WorkerAnts plugin) {
         this.plugin = plugin;
@@ -69,15 +70,11 @@ public class Dependencies implements IDependencies {
                 }
                 if (!found) {
                     plugin.getServer().getPluginManager().registerEvents(plugin.getCitizensListener(), plugin);
-                    //if (plugin.getSettings().canNpcEffects()) {
-                    //    plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, plugin.getNpcEffectThread(),
-                    //            20, 20);
-                    //}
-                    plugin.getLogger().info("Successfully linked Quests with Citizens "
+                    plugin.getLogger().info("Successfully linked WorkerAnts with Citizens "
                             + citizens.getDescription().getVersion());
                 }
             } catch (final Exception e) {
-                plugin.getLogger().warning("Legacy version of Citizens found. Citizens in Quests not enabled.");
+                plugin.getLogger().warning("Legacy version of Citizens found. Citizens in WorkerAnts not enabled.");
             }
         }
     }
@@ -142,6 +139,10 @@ public class Dependencies implements IDependencies {
             }
         }
         return "NPC";
+    }
+
+    public Set<UUID> getSelectingNpcs() {
+        return selectingNpcs;
     }
 
     public @Nullable UUID getUUIDFromNPC(final Entity entity) {
