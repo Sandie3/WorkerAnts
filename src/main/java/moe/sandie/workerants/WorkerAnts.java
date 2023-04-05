@@ -11,6 +11,7 @@ import moe.sandie.workerants.util.Lang;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -21,6 +22,7 @@ import java.io.*;
 import java.net.URISyntaxException;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -87,7 +89,9 @@ public final class WorkerAnts extends JavaPlugin implements WorkerAntsAPI {
         }
 
         ItemManager.init();
-        getCommand("worker").setExecutor(cmdExecutor);
+        Objects.requireNonNull(getCommand("worker")).setExecutor(getTabExecutor());
+        Objects.requireNonNull(getCommand("resetnpcs")).setExecutor(getTabExecutor());
+
         getServer().getPluginManager().registerEvents(new WorkerSpawnEgg(this), this);
     }
 
@@ -226,5 +230,12 @@ public final class WorkerAnts extends JavaPlugin implements WorkerAntsAPI {
     }
     public InputStream getPluginResource(String filename) {
         return getResource(filename);
+    }
+    @SuppressWarnings("unused")
+    public CommandExecutor getCommandExecutor() {
+        return cmdExecutor;
+    }
+    public TabExecutor getTabExecutor() {
+        return cmdExecutor;
     }
 }

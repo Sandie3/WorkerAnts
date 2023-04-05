@@ -9,3 +9,6 @@ commands:
   worker:
     description: gives npc egg to player
     usage: /<command>
+  resetnpcs:
+    description: reset npc ids
+    usage: /<command>

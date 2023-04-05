@@ -3,6 +3,8 @@ package moe.sandie.workerants.commands;
 import moe.sandie.workerants.ItemManager;
 import moe.sandie.workerants.WorkerAnts;
 import moe.sandie.workerants.util.Lang;
+import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.npc.NPCRegistry;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -39,6 +41,9 @@ public class CommandManager implements TabExecutor {
         }
         if (command.getName().equalsIgnoreCase("worker")){
             ((Player) sender).getPlayer().getInventory().addItem(ItemManager.npcSpawnEgg);
+        }
+        if (command.getName().equalsIgnoreCase("resetnpcs")){
+            CitizensAPI.getNPCRegistry().deregisterAll();
         }
         return false;
     }

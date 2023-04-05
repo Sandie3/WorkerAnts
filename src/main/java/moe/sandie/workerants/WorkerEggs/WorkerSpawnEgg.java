@@ -35,42 +35,40 @@ public class WorkerSpawnEgg implements Listener {
 
     public void createWorkerNpc(Location spawnLocation, Location playerLocation, Player player) {
         NPCRegistry npcRegistry = CitizensAPI.getNPCRegistry();
-        boolean npc = false;
-        try {
-            npc = plugin.getNPCDataConfig().contains("npcs.user." + player.getName());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        if (!npc) {
-            NPC spawnNPC = npcRegistry.createNPC(player.getType(), player.getName() + "'s Worker", spawnLocation);
-            spawnNPC.faceLocation(playerLocation);
-            spawnNPC.getOrAddTrait(Owner.class).setOwner(player.getUniqueId());
 
-            UUID myuuid = player.getUniqueId();
-            UUID npcuuid = spawnNPC.getUniqueId();
-            AssociatedNPC.put(myuuid, npcuuid);
+        NPC spawnNPC = npcRegistry.createNPC(player.getType(), player.getName() + "'s Worker", spawnLocation);
+        spawnNPC.faceLocation(playerLocation);
+        spawnNPC.getOrAddTrait(Owner.class).setOwner(player.getUniqueId());
 
-            plugin.getNPCDataConfig().set("npcs.user." + player.getName() + ".NPC", npcuuid.toString());
-            plugin.saveNPCDataConfig();
+        UUID myuuid = player.getUniqueId();
+        UUID npcuuid = spawnNPC.getUniqueId();
+        AssociatedNPC.put(myuuid, npcuuid);
 
-            Equipment equipTrait = spawnNPC.getOrAddTrait(Equipment.class);
-            //ItemStack diamondSword = new ItemStack(Material.DIAMOND_SWORD, 1);
-            ItemStack IRONHelmet = new ItemStack(Material.IRON_HELMET, 1);
-            ItemStack IRONChest = new ItemStack(Material.IRON_CHESTPLATE, 1);
-            ItemStack IRONPants = new ItemStack(Material.IRON_LEGGINGS, 1);
-            ItemStack IRONBoots = new ItemStack(Material.IRON_BOOTS, 1);
+        String defPath = "npc." + spawnNPC.getId();
 
-            //equipTrait.set(0, diamondSword);
-            equipTrait.set(1, IRONHelmet);
-            equipTrait.set(2, IRONChest);
-            equipTrait.set(3, IRONPants);
-            equipTrait.set(4, IRONBoots);
+        plugin.getNPCDataConfig().set(defPath + ".UUID", npcuuid.toString());
+        plugin.getNPCDataConfig().set(defPath + ".name", player.getName() + "'s Worker");
+        plugin.getNPCDataConfig().set(defPath + ".role", "default");
+        plugin.getNPCDataConfig().set(defPath + ".owner.UUID", myuuid.toString());
+        plugin.getNPCDataConfig().set(defPath + ".owner.name", player.getName());
+        plugin.saveNPCDataConfig();
 
-            player.sendMessage(ChatColor.GREEN + "Spawned in " + player.getName() + "'s worker");
-            npcRegistry.saveToStore();
-        } else {
-            player.sendMessage(ChatColor.RED + "You already own a worker");
-        }
+        Equipment equipTrait = spawnNPC.getOrAddTrait(Equipment.class);
+        //ItemStack diamondSword = new ItemStack(Material.DIAMOND_SWORD, 1);
+        ItemStack IRONHelmet = new ItemStack(Material.IRON_HELMET, 1);
+        ItemStack IRONChest = new ItemStack(Material.IRON_CHESTPLATE, 1);
+        ItemStack IRONPants = new ItemStack(Material.IRON_LEGGINGS, 1);
+        ItemStack IRONBoots = new ItemStack(Material.IRON_BOOTS, 1);
+
+        //equipTrait.set(0, diamondSword);
+        equipTrait.set(1, IRONHelmet);
+        equipTrait.set(2, IRONChest);
+        equipTrait.set(3, IRONPants);
+        equipTrait.set(4, IRONBoots);
+
+        player.sendMessage(ChatColor.GREEN + "Spawned in " + player.getName() + "'s worker");
+        npcRegistry.saveToStore();
+
     }
 
     @EventHandler
