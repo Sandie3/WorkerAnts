@@ -44,26 +44,25 @@ public class CitizensListener extends InventoryManager implements Listener {
                 }
                 event.getClicker().acceptConversationInput(String.valueOf(event.getNPC().getUniqueId()));
             }
+
             plugin.getLogger().info("Right clicked npc");
             plugin.getPluginLogger().info(npc.getUniqueId().toString());
             Player NPCOwner = Bukkit.getPlayer(npc.getTrait(Owner.class).getOwnerId());
 
-            //event.getClicker().sendMessage(ChatColor.GREEN + "NPC UUID: " + ChatColor.GOLD + npc.getUniqueId().toString());
             assert NPCOwner != null;
             event.getClicker().sendMessage(ChatColor.GREEN + "NPC OWNER: " + ChatColor.GOLD + NPCOwner.getName());
 
-            // TODO: Write another method to check who owns NPC and open inventory for said NPC.
-            // TODO: Add OP bypass
-
-            if (!npc.getTrait(Owner.class).isOwnedBy(p)) {
+            if (!Objects.equals(Objects.requireNonNull(plugin.getNPCDataConfig().get("npc." + npc.getId() + ".owner.UUID")).toString(), p.getUniqueId().toString())) {
                 p.sendMessage(ChatColor.RED + "You can't interact with " + NPCOwner.getName() + "'s worker");
                 return;
             }
 
+            // TODO: Create Inventory & Menu when NPC is created in WorkerSpawnEgg class.
             if (!plugin.getNPCDataConfig().contains("npc." + npc.getId() + ".inventory")) {
                 createNPCInventory(p, npc);
             }
-            loadNPCInventory(p,"npc." + npc.getId() + ".inventory");
+
+            loadNPCInventory(p,npc);
         }
 
     }

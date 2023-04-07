@@ -5,16 +5,23 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Translatable;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.profile.PlayerProfile;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 
@@ -31,26 +38,53 @@ public class InventoryManager {
 
     public void createNPCInventory(Player player, NPC npc){
         this.npc = npc;
-        this.inv = Bukkit.createInventory(player, InventoryType.CHEST, "Worker menu");
+        Inventory inv = Bukkit.createInventory(player, InventoryType.CHEST, "Worker menu");
+
         ItemStack filler = new ItemStack(Material.WHITE_STAINED_GLASS_PANE, 1);
-        ItemStack ref1 = new ItemStack(Material.RED_STAINED_GLASS_PANE, 1);
+        ItemStack close = new ItemStack(Material.RED_STAINED_GLASS_PANE, 1);
+        ItemStack stats = new ItemStack(Material.PLAYER_HEAD, 1);
+
         ItemMeta metaFiller = filler.getItemMeta();
-        ItemMeta metaRef1 = ref1.getItemMeta();
+        ItemMeta metaClose = close.getItemMeta();
+        SkullMeta metaStats = (SkullMeta) stats.getItemMeta();
 
-        assert metaRef1 != null;
-        metaRef1.setDisplayName(ChatColor.RED + "Close menu");
         assert metaFiller != null;
-        metaFiller.setDisplayName("");
+        assert metaClose != null;
+        assert metaStats != null;
 
-        ref1.setItemMeta(metaRef1);
+        ArrayList<String> loreStats = new ArrayList<>();
+
+        metaFiller.setDisplayName(" ");
+
+        metaClose.setDisplayName(ChatColor.RED + "Close menu");
+
+        metaStats.setDisplayName(ChatColor.GOLD + "Worker stats");
+        metaStats.addItemFlags(ItemFlag.HIDE_PLACED_ON);
+        metaStats.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+
+        loreStats.add(player.getName() + "'s worker");
+        loreStats.add(" ");
+        loreStats.add(ChatColor.RESET + "" + ChatColor.GRAY + "Worker level: " + ChatColor.LIGHT_PURPLE + 1);
+        loreStats.add(ChatColor.RESET + "" + ChatColor.GRAY + "Worker level: " + ChatColor.LIGHT_PURPLE + 9999);
+        loreStats.add(ChatColor.RESET + "" + ChatColor.GRAY + "Worker level: " + ChatColor.LIGHT_PURPLE + "AYO");
+        loreStats.add(ChatColor.RESET + "" + ChatColor.GRAY + "Worker level: " + ChatColor.LIGHT_PURPLE + "?????");
+
+        metaStats.setLore(loreStats);
+
+        metaStats.setOwnerProfile(player.getPlayerProfile());
+
         filler.setItemMeta(metaFiller);
+        close.setItemMeta(metaClose);
+        stats.setItemMeta(metaStats);
+
         for (int i = 0; i < inv.getSize(); i++ ){
             inv.setItem(i, filler);
         }
-        inv.setItem(26, ref1);
+        inv.setItem(15, close);
+        inv.setItem(11, stats);
 
-        //plugin.getNPCDataConfig().set("npc." + npc.getId() + ".inventory", inv);
         saveNPCInventory(npc, inv);
+        this.inv = inv;
 
         player.openInventory(inv);
     }
@@ -59,8 +93,11 @@ public class InventoryManager {
     public void OnInventoryClick(InventoryClickEvent e) {
         Player p = (Player) e.getWhoClicked();
         if (e.getView().getTitle().equals("Worker menu")) {
+            e.setCancelled(true);
             switch (e.getSlot()) {
-                case 26:
+                case 11:
+                    break;
+                case 15:
                     e.setCancelled(true);
                     saveNPCInventory(npc, inv);
                     p.closeInventory();
@@ -81,15 +118,15 @@ public class InventoryManager {
         plugin.saveNPCDataConfig();
     }
 
-    public void loadNPCInventory(Player p, String path){
+    public void loadNPCInventory(Player p, NPC npc){
+        this.npc = npc;
+        String path = "npc." + npc.getId() + ".inventory.slot.";
         Inventory inventory = Bukkit.createInventory(p, InventoryType.CHEST, "Worker menu");
 
         for (int i = 0; i < inventory.getSize(); i++){
-            inventory.setItem(i, (ItemStack) plugin.getNPCDataConfig().get(path + ".slot." + i));
+            inventory.setItem(i, (ItemStack) plugin.getNPCDataConfig().get(path + i));
         }
 
-        // probably don't need this / might actually break things...
-        // Will have to test later. I've been debugging for 8 hours...
         inv = inventory;
 
         p.openInventory(inventory);
