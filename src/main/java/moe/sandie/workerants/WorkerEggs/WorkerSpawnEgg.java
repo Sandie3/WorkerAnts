@@ -46,6 +46,8 @@ public class WorkerSpawnEgg implements Listener {
 
         String defPath = "npc." + spawnNPC.getId();
 
+        // TODO: Create file for each worker.
+
         plugin.getNPCDataConfig().set(defPath + ".UUID", npcuuid.toString());
         plugin.getNPCDataConfig().set(defPath + ".name", player.getName() + "'s Worker");
         plugin.getNPCDataConfig().set(defPath + ".role", "default");
